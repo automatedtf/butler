@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/automatedtf/butler/issues"
   },
-  "homepage": "https://github.com/automatedtf/butler#readme"
+  "homepage": "https://github.com/automatedtf/butler#readme",
+  "devDependencies": {
+    "typescript": "^4.3.2"
+  }
 }
