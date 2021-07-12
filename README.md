@@ -17,3 +17,12 @@ The large majority of "Steam bots" currently couple together passive interfacing
 By separating the logic into a passive component `@automatedtf/sentinel` and an active component `@automatedtf/butler`, it allows for cross-applicational systems to exist with newly-found opportunities for scalability, robustness and maintenance.
 
 This library is suitable for usage in both stateful settings (i.e handler functions for a 24/7 bot instance) and stateless settings (i.e Cloud / Lambda functions).
+
+## 🔌 Getting Started
+`🚧 TODO 🚧`
+
+## 💡 Improvements to Make
+`🚧 TODO 🚧`
+
+## 📚 Helpful Resources
+`🚧 TODO 🚧`
