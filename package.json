@@ -23,8 +23,6 @@
     "typescript": "^4.3.2"
   },
   "dependencies": {
-    "dotenv": "^10.0.0",
-    "steam-totp": "^2.1.1",
     "steam-tradeoffer-manager": "^2.10.3",
     "steam-user": "^4.19.10",
     "steamcommunity": "^3.42.0"
