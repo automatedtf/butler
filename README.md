@@ -14,7 +14,7 @@ Butler is a library for actively interfacing with Steam APIs to perform actions 
 
 The large majority of "Steam bots" currently couple together passive interfacing (i.e listening to events) and active interfacing (i.e actions such as making and sending a Steam trade offer) within a single application. This can make testing long and tedious, often having to be done manually.
 
-By separating the logic into a passive component `@automatedtf/sentinel` and an active component `@automatedtf/butler`, it allows for cross-applicational systems to exist with newly-found opportunities for scalability, robustness and maintenance.
+By separating the logic into a passive component [`@automatedtf/sentinel`](https://github.com/automatedtf/sentinel) and an active component `@automatedtf/butler`, it allows for cross-applicational systems to exist with newly-found opportunities for scalability, robustness and maintenance.
 
 This library is suitable for usage in both stateful settings (i.e handler functions for a 24/7 bot instance) and stateless settings (i.e Cloud / Lambda functions).
 
@@ -25,4 +25,4 @@ This library is suitable for usage in both stateful settings (i.e handler functi
 `🚧 TODO 🚧`
 
 ## 📚 Helpful Resources
-`🚧 TODO 🚧`
+- [`@automatedtf/sentinel`](https://github.com/automatedtf/sentinel)
