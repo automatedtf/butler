@@ -19,9 +19,8 @@ class BotInstance {
     community: any;
     trade_manager: any;
 
-    constructor(secrets: SteamSecrets, cookies: string[]) {
+    constructor(secrets: SteamSecrets) {
         this.secrets = secrets;
-        this.cookies = cookies;
     }
 
     private async _loginToSteamUser() {
@@ -107,10 +106,6 @@ class BotInstance {
     }
 }
 
-export function withCookies(cookies: string[]): BotInstance {
-    return new BotInstance(null, cookies)
-}
-
 export function withLoginDetails(secrets: SteamSecrets): BotInstance {
-    return new BotInstance(secrets, null);
+    return new BotInstance(secrets);
 }
