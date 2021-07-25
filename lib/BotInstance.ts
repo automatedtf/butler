@@ -83,7 +83,8 @@ class BotInstance {
     
     async createOffer(tradeURL: string): Promise<OutgoingTradeOffer> {
         let tradeManager = await this.accessTradeManager();
-        return tradeManager.createOffer(tradeURL);
+        const offer = tradeManager.createOffer(tradeURL);
+        return new OutgoingTradeOffer(offer);
     }
 
     async accessCommunity() {
