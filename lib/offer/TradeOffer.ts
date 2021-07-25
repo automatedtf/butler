@@ -1,8 +1,12 @@
 export default class TradeOffer {
     offer: any;
+    community: any;
+    identitySecret: string;
 
-    constructor(offer: any) {
+    constructor(offer: any, community: any, identitySecret: string) {
         this.offer = offer;
+        this.community = community;
+        this.identitySecret = identitySecret;
     }
 
     getID() {

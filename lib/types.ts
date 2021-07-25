@@ -18,6 +18,11 @@ export interface SteamLoginDetails {
     logonID?: number;
 }
 
+export interface SteamSecrets extends SteamLoginDetails {
+    identitySecret: string;
+    sharedSecret: string;
+}
+
 export interface SteamLoginResponse {
     error?: SteamLoginErrors,
     emaildomain?: string;

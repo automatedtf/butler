@@ -1,16 +1,17 @@
 import IncomingTradeOffer from './offer/IncomingTradeOffer';
 import OutgoingTradeOffer from './offer/OutgoingTradeOffer';
-import { SteamLoginDetails } from './types';
+import { SteamLoginDetails, SteamSecrets } from './types';
 
 const SteamUser = require("steam-user");
 const TradeOfferManager = require("steam-tradeoffer-manager");
 const SteamCommunity = require("steamcommunity");
+const SteamTotp = require("steam-totp");
 
 class BotInstance {
     // steam-user
     // steamcommunity
     // steam trade offer manager
-    details: SteamLoginDetails;
+    secrets: SteamSecrets;
     steam_user: any;
 
     cookies: string[];
@@ -18,15 +19,19 @@ class BotInstance {
     community: any;
     trade_manager: any;
 
-    constructor(details: SteamLoginDetails, cookies: string[]) {
-        this.details = details;
+    constructor(secrets: SteamSecrets, cookies: string[]) {
+        this.secrets = secrets;
         this.cookies = cookies;
     }
 
     private async _loginToSteamUser() {
         return await new Promise((resolve, reject) => {
             let client = new SteamUser();
-            client.logOn(this.details);
+            if (!this.secrets.twoFactorCode) {
+                this.secrets.twoFactorCode = SteamTotp.getAuthCode(this.secrets.sharedSecret);
+            }
+
+            client.logOn(this.secrets);
 
             client.on("loggedOn", () => {
                 client.on("webSession", (_, cookies) => {
@@ -74,9 +79,13 @@ class BotInstance {
         let tradeManager = await this.accessTradeManager();
 
         return await new Promise((resolve, reject) => {
-            tradeManager.getOffer(id, (err, offer) => {
+            tradeManager.getOffer(id, async (err, offer) => {
                 if (err) return reject(err);
-                return resolve(new IncomingTradeOffer(offer));
+                return resolve(new IncomingTradeOffer({
+                    offer,
+                    community: await this.accessCommunity(),
+                    identitySecret: this.secrets.identitySecret
+                }));
             });
         });
     }
@@ -84,7 +93,11 @@ class BotInstance {
     async createOffer(tradeURL: string): Promise<OutgoingTradeOffer> {
         let tradeManager = await this.accessTradeManager();
         const offer = tradeManager.createOffer(tradeURL);
-        return new OutgoingTradeOffer(offer);
+        return new OutgoingTradeOffer({
+            offer,
+            community: await this.accessCommunity(),
+            identitySecret: this.secrets.identitySecret
+        });
     }
 
     async accessCommunity() {
@@ -98,6 +111,6 @@ export function withCookies(cookies: string[]): BotInstance {
     return new BotInstance(null, cookies)
 }
 
-export function withLoginDetails(details: SteamLoginDetails): BotInstance {
-    return new BotInstance(details, null);
+export function withLoginDetails(secrets: SteamSecrets): BotInstance {
+    return new BotInstance(secrets, null);
 }

@@ -4,8 +4,8 @@ import { OfferSentStatus } from '../enums/Offer';
 
 export default class OutgoingTradeOffer extends TradeOffer {
 
-    constructor(offer: any) {
-        super(offer);
+    constructor({ offer, community, identitySecret }) {
+        super(offer, community, identitySecret);
     }
 
     addMyItems(items: Item[]) {
@@ -27,7 +27,13 @@ export default class OutgoingTradeOffer extends TradeOffer {
         return new Promise((resolve, reject) => {
             this.offer.send((err, status) => {
                 if (err) return reject(err);
-                return resolve(status);
+                
+                if (this.offer.itemsToGive.length == 0) return resolve(status);
+
+                this.community.acceptConfirmationForObject(this.identitySecret, this.offer.id, (err, status) => {
+                    if (err) return reject(err);
+                    return resolve(status);
+                });
             });
         });
     }

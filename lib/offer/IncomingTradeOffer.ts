@@ -3,8 +3,8 @@ import OutgoingTradeOffer from './OutgoingTradeOffer';
 
 export default class IncomingTradeOffer extends TradeOffer {
     
-    constructor(offer: any) {
-        super(offer);
+    constructor({ offer, community, identitySecret }) {
+        super(offer, community, identitySecret);
     }
 
     accept(): Promise<any> {
@@ -26,6 +26,10 @@ export default class IncomingTradeOffer extends TradeOffer {
     }
 
     counter(): Promise<OutgoingTradeOffer> {
-        return Promise.resolve(new OutgoingTradeOffer(this.offer.counter()));
+        return Promise.resolve(new OutgoingTradeOffer({
+            offer: this.offer.counter(),
+            community: this.community,
+            identitySecret: this.identitySecret
+        }));
     }
 }
