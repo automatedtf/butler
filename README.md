@@ -282,6 +282,7 @@ const {
 You can access other Steam functionalities by using the methods of the `BotInstance` class to access relevant clients. These will have already been instantiated for you, logged in, and ready to use.
 
 `BotInstance.accessTradeManager()` - Access the [trade manager client](https://github.com/DoctorMcKay/node-steam-tradeoffer-manager/wiki/TradeOfferManager).
+
 `BotInstance.accessCommunity()` - Access the [community client](https://github.com/DoctorMcKay/node-steamcommunity/wiki/SteamCommunity).
 
 ## 💡 Improvements to Make
