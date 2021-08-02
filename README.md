@@ -8,13 +8,21 @@
         - [Getting a Trade Offer](#getting-a-trade-offer)
     - [Login Details](#login-details)
         - [Minimal Login Details](#minimal-login-details)
+        - [Setting a LogonID](#setting-a-logonid)
+        - [BotInstance](#botinstance)
     - [Processing an IncomingTradeOffer](#processing-an-incomingtradeoffer)
         - [Accepting an IncomingTradeOffer](#accepting-an-incomingtradeoffer)
         - [Declining an IncomingTradeOffer](#declining-an-incomingtradeoffer)
         - [Countering an IncomingTradeOffer](#countering-an-incomingtradeoffer)
+    - [Creating an OutgoingTradeOffer](#creating-an-outgoingtradeoffer)
+        - [Adding Items to an OutgoingTradeOffer](#adding-items-to-an-outgoingtradeoffer)
+        - [Sending the OutgoingTradeOffer](#sending-the-outgoingtradeoffer)
     - [Getting Trade Exchange Details](#getting-trade-exchange-details)
+        - [Exchange Details for an OutgoingTradeOffer](#exchange-details-for-an-outgoingtradeoffer)
+        - [Exchange Details for an IncomingTradeOffer](#exchange-details-for-an-incomingtradeoffer)
     - [Accessing other Steam Functionalities](#accessing-other-steam-functionalities)
 - [💡 Improvements to Make](#-improvements-to-make)
+    - [In-Memory Bot Instances](#in-memory-bot-instances)
 - [📚 Helpful Resources](#-helpful-resources)
 
 ## 👋 Introduction
@@ -25,7 +33,7 @@ The large majority of "Steam bots" currently couple together passive interfacing
 
 By separating the logic into a passive component [`@automatedtf/sentinel`](https://github.com/automatedtf/sentinel) and an active component `@automatedtf/butler`, it allows for cross-applicational systems to exist with newly-found opportunities for scalability, robustness and maintenance.
 
-This library is designed to be stateless, meaning that it is suitable for usage in stateful settings (i.e handler functions for a 24/7 bot instance) and stateless settings (i.e Cloud / Lambda functions).
+This library is designed to provide functions built for ephemeral execution, meaning that it is suitable for usage in stateful settings (i.e handler functions for a 24/7 bot instance) and stateless settings (i.e Cloud / Lambda functions).
 
 ## 🔌 Getting Started
 
@@ -104,22 +112,197 @@ const loginDetails: SteamSecrets = {
 
 [🔗 Definition of SteamSecrets interface](https://github.com/automatedtf/butler/blob/master/lib/types.ts#L21)
 
+##### Setting a LogonID
+The usage of a `logonID` is optional, but recommended.
+
+When logging into an instance of a bot from `@automatedtf/sentinel`, `@automatedtf/butler` or by any other modules, it will kick all other sessions of the bot with the same `logonID`.
+
+To allow for multiple sessions of the bot to run, a unique `logonID` for that running bot instance. This can be set explicitly or randomly.
+
+##### BotInstance
+Logging in with any suitable form of login details will return a `BotInstance`.
+
+```typescript
+import { withLoginDetails, BotInstance } from '@automatedtf/butler';
+
+const loginDetails: SteamLoginDetails = { ... };
+const botInstance: BotInstance = await withLoginDetails(loginDetails);
+```
+
+This class has its own set of methods that can be interfaced with to perform various additional actions on the Steam platform. Generally, this class will be used for accessing offers via `BotInstance.getOffer` and `BotInstance.createOffer`.
+
+[🔗 Accessing other Steam Functionalities](#accessing-other-steam-functionalities)
+
 ### Processing an IncomingTradeOffer
+When an incoming trade offer is received from a user (e.g from receiving the event from `@automatedtf/sentinel` or as part of an event handler), you can process it using the following methods attached to the `IncomingTradeOffer` object that is returned when you decide to get the offer from using `BotInstance.getOffer`.
 
 ##### Accepting an IncomingTradeOffer
-`🚧 TODO 🚧`
+```typescript
+import { withLoginDetails } from '@automatedtf/butler';
+
+const offerid = '...';
+const loginDetails: SteamLoginDetails = { ... };
+
+const incomingOffer: IncomingTradeOffer = await withLoginDetails(loginDetails).getOffer(offerid);
+
+// Accepting an incoming trade offer
+await incomingOffer.accept();
+```
+
 ##### Declining an IncomingTradeOffer
-`🚧 TODO 🚧`
+```typescript
+import { withLoginDetails } from '@automatedtf/butler';
+
+const offerid = '...';
+const loginDetails: SteamLoginDetails = { ... };
+
+const incomingOffer: IncomingTradeOffer = await withLoginDetails(loginDetails).getOffer(offerid);
+
+// Decline an incoming trade offer
+await incomingOffer.decline();
+```
+
 ##### Countering an IncomingTradeOffer
-`🚧 TODO 🚧`
+```typescript
+import { withLoginDetails } from '@automatedtf/butler';
+
+const offerid = '...';
+const loginDetails: SteamLoginDetails = { ... };
+
+const incomingOffer: IncomingTradeOffer = await withLoginDetails(loginDetails).getOffer(offerid);
+
+// Countering an incoming trade offer
+const draftOutgoingOffer = await incomingOffer.counter();
+
+// Next: Add items, set message, etc.
+```
+
+### Creating an OutgoingTradeOffer
+You can use the `BotInstance.createOffer` method or `IncomingTradeOffer.counter` method (as shown above) to create an outgoing trade offer.
+
+```typescript
+import { withLoginDetails } from '@automatedtf/butler';
+
+const tradeURL: string = ...;
+const loginDetails: SteamLoginDetails = { ... };
+
+const outgoingOffer: OutgoingTradeOffer = await withLoginDetails(loginDetails).createOffer(tradeURL);
+```
+
+##### Adding Items to an OutgoingTradeOffer
+```typescript
+const outgoingOffer: OutgoingTradeOffer = ...; // get somehow
+
+const myItemsToAdd: Item[] = [...];
+const theirItemsToAdd: Item[] = [...];
+const message: string = "Please accept!";
+
+outgoingOffer.addMyItems(myItemsToAdd); // Add my items
+outgoingOffer.addTheirItems(theirItemsToAdd); // Add their items
+```
+
+The `Item` interface is defined as follows:
+```typescript
+interface Item {
+    assetid: string;
+    appid: number;
+    contextid: string;
+    amount: number;
+}
+```
+
+You can fetch instances of `Item` from a supported API or module, but generally, you can set this for yourself.
+
+```typescript
+// Creating an `Item` for Team Fortress 2 items
+
+import { ItemInstance } from '@automatedtf/sherpa';
+const item: ItemInstance = ...; // Get somehow  
+
+function toItem(itemInstance: ItemInstance): Item {
+    return {
+        assetid: itemInstance.assetid,
+        appid: itemInstance.appid, // 440 for TF2
+        contextid: '2', // ContextID for all TF2 items
+        amount: 1
+    } as Item;
+}
+```
+##### Sending the OutgoingTradeOffer
+When you are ready, you can then send the trade offer.
+```typescript
+// Set trade message (optional!)
+outgoingOffer.setMessage(message); 
+
+// Send the offer!
+await outgoingOffer.send();
+```
+Confirmation for the trade offer object is done automatically for convenience, meaning that you will not need to do anything else to ensure that the trade offer is sent to the other party.
+
+
 
 ### Getting Trade Exchange Details
-`🚧 TODO 🚧`
+You can get the new `assetid`s for the items in the trade offer using the `TradeOffer.getExchangeDetails` method that is provided for any `OutgoingTradeOffer` or `IncomingTradeOffer` instance.
+
+[🔗 Further Details on getExchangeDetails Returned Data](https://github.com/DoctorMcKay/node-steam-tradeoffer-manager/wiki/TradeOffer#getexchangedetailsgetdetailsiffailed-callback)
+
+##### Exchange Details for an OutgoingTradeOffer
+```typescript
+import { withLoginDetails } from '@automatedtf/butler';
+
+const outgoingOffer: OutgoingTradeOffer = ...; // get somehow
+...
+// ASSERT: outgoingOffer has been sent previously
+...
+const {
+    status,
+    tradeInitTime,
+    receivedItems,
+    sentItems
+} = outgoingOffer.getExchangeDetails();
+```
+
+##### Exchange Details for an IncomingTradeOffer
+```typescript
+import { withLoginDetails } from '@automatedtf/butler';
+
+const incomingOffer: IncomingTradeOffer = ...; // get somehow
+...
+// ASSERT: incomingOffer has been accepted previously
+...
+const {
+    status,
+    tradeInitTime,
+    receivedItems,
+    sentItems
+} = incomingOffer.getExchangeDetails();
+```
+
 ### Accessing other Steam Functionalities
-`🚧 TODO 🚧`
+You can access other Steam functionalities by using the methods of the `BotInstance` class to access relevant clients. These will have already been instantiated for you, logged in, and ready to use.
+
+`BotInstance.accessTradeManager()` - Access the [trade manager client](https://github.com/DoctorMcKay/node-steam-tradeoffer-manager/wiki/TradeOfferManager).
+`BotInstance.accessCommunity()` - Access the [community client](https://github.com/DoctorMcKay/node-steamcommunity/wiki/SteamCommunity).
 
 ## 💡 Improvements to Make
-`🚧 TODO 🚧`
+
+As said, the library is designed to be for ephemeral executions, but usage can be tailored for persistent bot instances by holding the running `BotInstance` object in memory.
+
+```typescript
+import { withLoginDetails } from '@automatedtf/butler';
+
+const loginDetails: SteamLoginDetails = { ... };
+const botInstance = await withLoginDetails(loginDetails);
+
+// Do stuff with botInstance
+```
+
+As such, there are potential opportunities of improvement to take advantage of to reduce the cold start time and improve the overall performance for using the library in a stateful setting.
+
+##### In-Memory Bot Instances
+Holding a bot instance in memory is a potential improvement when multiple (but centralised) accesses have to be made to the Steam account that is being operated programmatically as a bot.
+
+For example, one may have a dedicated `Express` server for executing actions for the bot to perform using `@automatedtf/butler`. Rather than a new login being performed always every single time when using `withLoginDetails`, `withLoginDetails` can first access a cache of `BotInstance` objects that have been created previously and then return the cached instance if present.
 
 ## 📚 Helpful Resources
 - [@automatedtf/sentinel](https://github.com/automatedtf/sentinel)
