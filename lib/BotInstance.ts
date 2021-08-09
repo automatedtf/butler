@@ -1,6 +1,6 @@
 import IncomingTradeOffer from './offer/IncomingTradeOffer';
 import OutgoingTradeOffer from './offer/OutgoingTradeOffer';
-import { SteamLoginDetails, SteamSecrets } from './types';
+import { SteamLoginDetails, SteamSecrets, SteamProfileDetails } from './types';
 
 const SteamUser = require("steam-user");
 const TradeOfferManager = require("steam-tradeoffer-manager");
@@ -103,6 +103,26 @@ class BotInstance {
         this.community = this.community || await this._loginToCommunity();
         console.log(this.community);
         return this.community;
+    }
+
+    async editProfile(details: Partial<SteamProfileDetails>): Promise<void> {
+        const community = await this.accessCommunity();
+        return await new Promise((resolve, reject) => {
+            community.editProfile(details, (err) => {
+                if (err) return reject(err);
+                return resolve();
+            });
+        });
+    }
+
+    async changeProfilePicture(url: string): Promise<void> {
+        const community = await this.accessCommunity();
+        return await new Promise((resolve, reject) => {
+            community.uploadAvatar(url, (err) => {
+                if (err) return reject(err);
+                return resolve();
+            });
+        });
     }
 }
 

@@ -20,6 +20,9 @@
     - [Getting Trade Exchange Details](#getting-trade-exchange-details)
         - [Exchange Details for an OutgoingTradeOffer](#exchange-details-for-an-outgoingtradeoffer)
         - [Exchange Details for an IncomingTradeOffer](#exchange-details-for-an-incomingtradeoffer)
+    - [Changing Profile Details](#changing-profile-details)
+        - [Editing Public Profile](#editing-public-profile)
+        - [Updating Profile Picture](#updating-profile-picture)
     - [Accessing other Steam Functionalities](#accessing-other-steam-functionalities)
 - [💡 Improvements to Make](#-improvements-to-make)
     - [In-Memory Bot Instances](#in-memory-bot-instances)
@@ -277,6 +280,44 @@ const {
     sentItems
 } = incomingOffer.getExchangeDetails();
 ```
+
+### Changing Profile Details
+
+For ease, several methods are offered under the `BotInstance` class to facilitate changing profile details.
+
+##### Editing Public Profile
+```typescript
+import { withLoginDetails } from '@automatedtf/butler';
+
+const loginDetails: SteamLoginDetails = { ... };
+const botInstance: BotInstance = await withLoginDetails(loginDetails);
+
+const profileDetails: Partial<SteamProfileDetails> = {
+    name: "New Name",
+    realName: "New Real Name",
+    summary: "New Summary",
+    country: "UK",
+    state: "FL",
+    city: "Orlando",
+    customURL: "myNewCustomURLToMyProfile",
+}
+await botInstance.editProfile(profileDetails);
+```
+
+This can be used to change the public profile details of the account.
+
+##### Updating Profile Picture
+```typescript
+import { withLoginDetails } from '@automatedtf/butler';
+
+const loginDetails: SteamLoginDetails = { ... };
+const botInstance: BotInstance = await withLoginDetails(loginDetails);
+
+const photoURL: string = "...";
+await botInstance.changeProfilePicture(photoURL);
+```
+
+For now, support is only provided for a `https://` or `http://` url to a photo.
 
 ### Accessing other Steam Functionalities
 You can access other Steam functionalities by using the methods of the `BotInstance` class to access relevant clients. These will have already been instantiated for you, logged in, and ready to use.

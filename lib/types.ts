@@ -18,6 +18,16 @@ export interface SteamLoginDetails {
     logonID?: number;
 }
 
+export interface SteamProfileDetails {
+    name: string;
+    realName: string;
+    summary: string;
+    country: string;
+    state: string;
+    city: string;
+    customURL: string;
+}
+
 export interface SteamSecrets extends SteamLoginDetails {
     identitySecret: string;
     sharedSecret: string;
