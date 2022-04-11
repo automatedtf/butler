@@ -26,6 +26,11 @@ class BotInstance {
     private async _loginToSteamUser() {
         return await new Promise((resolve, reject) => {
             let client = new SteamUser();
+
+            if (this.secrets.logonID == null) {
+                this.secrets.logonID = Date.now() % 2 ** 16;
+            }
+
             if (!this.secrets.twoFactorCode) {
                 this.secrets.twoFactorCode = SteamTotp.getAuthCode(this.secrets.sharedSecret);
             }

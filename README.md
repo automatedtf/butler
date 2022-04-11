@@ -116,11 +116,11 @@ const loginDetails: SteamSecrets = {
 [🔗 Definition of SteamSecrets interface](https://github.com/automatedtf/butler/blob/master/lib/types.ts#L21)
 
 ##### Setting a LogonID
-The usage of a `logonID` is optional, but recommended.
+The usage of a `logonID` is optional.
 
 When logging into an instance of a bot from `@automatedtf/sentinel`, `@automatedtf/butler` or by any other modules, it will kick all other sessions of the bot with the same `logonID`.
 
-To allow for multiple sessions of the bot to run, a unique `logonID` for that running bot instance. This can be set explicitly or randomly.
+To allow for multiple sessions of the bot to run, a unique `logonID` for that running bot instance. This can be set explicitly or randomly. The module will generate a deterministic `logonID` if not set, using the hash `Date.now() % 2 ** 16`.
 
 ##### BotInstance
 Logging in with any suitable form of login details will return a `BotInstance`.
