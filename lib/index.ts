@@ -1,1 +1,1 @@
-export { withLoginDetails } from "./BotInstance";
+export { withCookies, withLoginDetails } from './BotInstance';

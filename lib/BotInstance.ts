@@ -1,6 +1,6 @@
 import IncomingTradeOffer from './offer/IncomingTradeOffer';
 import OutgoingTradeOffer from './offer/OutgoingTradeOffer';
-import { SteamLoginDetails, SteamSecrets, SteamProfileDetails } from './types';
+import { SteamSecrets, SteamProfileDetails } from './types';
 
 const SteamUser = require("steam-user");
 const TradeOfferManager = require("steam-tradeoffer-manager");
@@ -133,4 +133,10 @@ class BotInstance {
 
 export function withLoginDetails(secrets: SteamSecrets): BotInstance {
     return new BotInstance(secrets);
+}
+
+export function withCookies(secrets: SteamSecrets, cookies: string[]): BotInstance {
+    const bot = new BotInstance(secrets);
+    bot.cookies = cookies;
+    return bot;
 }

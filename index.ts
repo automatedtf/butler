@@ -1,1 +1,1 @@
-export { withLoginDetails } from "./lib";
+export { withLoginDetails, withCookies } from "./lib";

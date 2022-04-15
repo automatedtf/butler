@@ -136,6 +136,21 @@ This class has its own set of methods that can be interfaced with to perform var
 
 [🔗 Accessing other Steam Functionalities](#accessing-other-steam-functionalities)
 
+##### Logging in with Cookies
+Cookies are given when a `steam-user` client joins a `webSession`. These cookies can be used to log back into a previous session without having to login again. This is highly recommended when you are logging into multiple instances of a bot, as you may the receive the `AlreadyLoggedInElsewhere` error at times.
+
+To login with cookies, you can use the `withCookies` function instead of `withLoginDetails`.
+
+```typescript
+import { withCookies } from '@automatedtf/butler';
+const loginDetails: SteamLoginDetails = { ... };
+const cookies: string[] = [...];
+
+const botInstance: BotInstance = withCookies(cookies);
+```
+
+[🔗 Read more about logging in with Cookies](https://dev.doctormckay.com/topic/365-cookies/)
+
 ### Processing an IncomingTradeOffer
 When an incoming trade offer is received from a user (e.g from receiving the event from `@automatedtf/sentinel` or as part of an event handler), you can process it using the following methods attached to the `IncomingTradeOffer` object that is returned when you decide to get the offer from using `BotInstance.getOffer`.
 
