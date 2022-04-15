@@ -10,6 +10,7 @@
         - [Minimal Login Details](#minimal-login-details)
         - [Setting a LogonID](#setting-a-logonid)
         - [BotInstance](#botinstance)
+        - [Logging in with Cookies](#logging-in-with-cookies)
     - [Processing an IncomingTradeOffer](#processing-an-incomingtradeoffer)
         - [Accepting an IncomingTradeOffer](#accepting-an-incomingtradeoffer)
         - [Declining an IncomingTradeOffer](#declining-an-incomingtradeoffer)
