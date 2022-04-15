@@ -130,7 +130,7 @@ Logging in with any suitable form of login details will return a `BotInstance`.
 import { withLoginDetails, BotInstance } from '@automatedtf/butler';
 
 const loginDetails: SteamLoginDetails = { ... };
-const botInstance: BotInstance = await withLoginDetails(loginDetails);
+const botInstance: BotInstance = withLoginDetails(loginDetails);
 ```
 
 This class has its own set of methods that can be interfaced with to perform various additional actions on the Steam platform. Generally, this class will be used for accessing offers via `BotInstance.getOffer` and `BotInstance.createOffer`.
